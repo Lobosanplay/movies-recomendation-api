@@ -10,3 +10,14 @@ async def startup_event():
     await recommendation_service.initialize()
 
 app.include_router(api_router, prefix="/api/v1")
+
+@app.get("/")
+async def root():
+    """Endpoint raíz con información de la API."""
+    return {
+        "message": "Movie Recommendation API",
+        "version": "1.0.0",
+        "docs": "/docs",
+        "redoc": "/redoc",
+        "health": "/api/v1/health"
+    }
