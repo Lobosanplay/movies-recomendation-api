@@ -144,6 +144,11 @@ Content-Type: application/json
 GET /api/v1/search?query=avengers&limit=10
 ```
 
+### Búsqueda de Generos
+```http
+GET /api/v1//search/genres?query=adven&match_type=contains
+```
+
 ### Comparación de Películas
 ```http
 GET /api/v1/compare?movie1=Inception&movie2=Matrix
