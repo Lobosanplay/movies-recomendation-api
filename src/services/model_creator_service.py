@@ -92,7 +92,7 @@ class MovieDataPreprocessor:
             lambda row: ' '.join(sum(row.values, [])), axis=1
         )
 
-        columns_to_drop = ['overview', 'cast', 'genres', 'crew', 'keywords']
+        columns_to_drop = ['overview', 'cast', 'crew', 'keywords']
         df.drop(columns=columns_to_drop, inplace=True)
         
         return df
@@ -199,7 +199,7 @@ async def create_model(model_path: str, max_features: int = 5000) -> Tuple[np.nd
         
         vectorizer_model.save_vectorizer(model_path.replace('.pkl', ''))
         
-        metadata = movies_processed[['movie_id', 'title']].copy()
+        metadata = movies_processed[['movie_id', 'title', 'genres']].copy()
         metadata_path = model_path.replace('.pkl', '_metadata.pkl')
         joblib.dump(metadata, metadata_path)
         
