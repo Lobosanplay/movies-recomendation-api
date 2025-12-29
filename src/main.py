@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from services.model_service import recommendation_service
 from api.v1.router import api_router
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
@@ -8,6 +9,14 @@ app = FastAPI()
 async def startup_event():
     """Se ejecuta al iniciar la aplicación"""
     await recommendation_service.initialize()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],          
+    allow_credentials=True,
+    allow_methods=["*"], 
+    allow_headers=["*"],
+)
 
 app.include_router(api_router, prefix="/api/v1")
 
