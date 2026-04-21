@@ -30,7 +30,7 @@ class RecommendationModelService:
 
     async def initialize(
         self,
-        model_path: str = "src/models/recomendation_model.pkl",
+        model_path: str = "models/recomendation_model.pkl",
         create_if_missing: bool = True,
     ):
         """
