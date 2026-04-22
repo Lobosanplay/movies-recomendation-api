@@ -1,12 +1,10 @@
-import os
 from typing import List, Optional
 
 import joblib
-import pandas as pd
 from fastapi import HTTPException
 from sklearn.metrics.pairwise import cosine_similarity
 
-from services.model_creator_service import create_model
+from utils.dowload_model import download_model
 
 
 class RecommendationModelService:
@@ -28,11 +26,7 @@ class RecommendationModelService:
             self.movie_titles_map = {}
             self.initialized = True
 
-    async def initialize(
-        self,
-        model_path: str = "src/models/recomendation_model.pkl",
-        create_if_missing: bool = True,
-    ):
+    async def initialize(self):
         """
         Inicializa el servicio cargando el modelo.
 
@@ -41,33 +35,21 @@ class RecommendationModelService:
             create_if_missing: Si es True, crea el modelo si no existe
         """
         try:
-            if not os.path.exists(model_path) and create_if_missing:
-                print("Modelo no encontrado, creando nuevo...")
-                await create_model(model_path)
+            movie_vectors_path = await download_model(
+                "https://huggingface.co/Lobosanplay/movies_recomendation/resolve/main/recomendation_model.pkl"
+            )
+            vectorizer_path = await download_model(
+                "https://huggingface.co/Lobosanplay/movies_recomendation/resolve/main/recomendation_model_vectorizer.pkl"
+            )
+            metadata_path = await download_model(
+                "https://huggingface.co/Lobosanplay/movies_recomendation/resolve/main/recomendation_model_metadata.pkl"
+            )
 
-            self.movie_vectors = joblib.load(model_path)
-
-            vectorizer_path = model_path.replace(".pkl", "_vectorizer.pkl")
-            metadata_path = model_path.replace(".pkl", "_metadata.pkl")
-
-            if os.path.exists(vectorizer_path):
-                self.vectorizer = joblib.load(vectorizer_path)
-
-            if os.path.exists(metadata_path):
-                self.movie_metadata = joblib.load(metadata_path)
-            else:
-                self.movie_metadata = pd.DataFrame(
-                    {
-                        "movie_id": range(len(self.movie_vectors)),
-                        "title": [
-                            f"Movie_{i}" for i in range(len(self.movie_metadata))
-                        ],
-                    }
-                )
+            self.movie_vectors = joblib.load(movie_vectors_path)
+            self.vectorizer = joblib.load(vectorizer_path)
+            self.movie_metadata = joblib.load(metadata_path)
 
             self._build_title_map()
-
-            print(f"✅ Modelo cargado: {len(self.movie_vectors)} películas")
 
         except Exception as e:
             print(f"❌ Error inicializando modelo: {e}")
