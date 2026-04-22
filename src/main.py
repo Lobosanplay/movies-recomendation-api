@@ -19,8 +19,8 @@ app = FastAPI(lifespan=startup_event)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173/",
-        "https://movies-recomends-page.vercel.app/",
+        "http://localhost:5173",
+        "https://movies-recomends-page.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
